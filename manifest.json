@@ -1,0 +1,25 @@
+{
+  "name": "ReaderMode",
+  "version": "1.0",
+  "description": "",
+  "manifest_version": 2,
+  "commands": {
+    "reader-mode": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+L"
+      },
+      "description": "Reader Mode"
+    }
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["readerMode.js"]
+    }
+  ],
+  "permissions": ["<all_urls>"]
+}
