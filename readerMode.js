@@ -13,7 +13,16 @@ function renderReaderMode() {
         margin-left: auto;
         margin-right: auto;
         padding: 1em;
-        font-size: 14pt
+        font-size: 16pt;
+        font-family: Garamond, serif;
+        color: #2E3440; 
+        background-color: #ECEFF4;
+      }
+      a {
+        color: #5E81AC;
+      }
+      a:visited {
+        color: #B48EAD;
       }
     </style>
   `;
