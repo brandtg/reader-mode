@@ -13,8 +13,8 @@ function renderReaderMode() {
         margin-left: auto;
         margin-right: auto;
         padding: 1em;
-        font-size: 16pt;
-        font-family: Garamond, serif;
+        font-size: 14pt;
+        font-family: Helvetica, sans-serif;
         color: #2E3440; 
         background-color: #ECEFF4;
       }
