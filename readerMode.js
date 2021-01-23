@@ -4,7 +4,7 @@ function isHidden(el) {
 
 function renderReaderMode() {
   const content = Array.from(
-    document.querySelectorAll("h1, h2, h3, h4, h5, h6, p")
+    document.querySelectorAll("h1, h2, h3, h4, h5, h6, p, img, table")
   ).filter((elt) => !isHidden(elt));
   document.head.innerHTML = `
     <style>
