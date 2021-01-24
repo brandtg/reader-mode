@@ -144,8 +144,11 @@ function renderReaderModeNewTab() {
         margin-right: auto;
         padding: 1em;
         font-size: 14pt;
-        font-family: Helvetica, sans-serif;
+        font-family: Arial, sans-serif;
         color: #2E3440; 
+      }
+      p {
+        line-height: 1.6;
       }
       a {
         color: #5E81AC;
