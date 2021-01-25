@@ -171,6 +171,7 @@ function renderReaderModeNewTab() {
         style='border: 0'
         width='100%'
         height='100%'
+        onload='this.focus();'
         src='data:text/html;charset=UTF-8;base64,${Base64.encode(content)}'>
     </iframe>
     `
