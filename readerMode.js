@@ -166,13 +166,18 @@ function renderReaderModeNewTab() {
   reader.document.open();
   reader.document.write(
     `
-    <iframe
-        style='border: 0'
-        width='100%'
-        height='100%'
-        onload='this.focus();'
-        src='data:text/html;charset=UTF-8;base64,${Base64.encode(content)}'>
-    </iframe>
+    <head>
+      <title>${document.title}</title>
+    </head>
+    <body>
+      <iframe
+          style='border: 0'
+          width='100%'
+          height='100%'
+          onload='this.focus();'
+          src='data:text/html;charset=UTF-8;base64,${Base64.encode(content)}'>
+      </iframe>
+    </body>
     `
   );
   reader.document.close();
