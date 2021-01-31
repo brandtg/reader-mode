@@ -139,11 +139,11 @@ function renderReaderModeNewTab() {
     `
     <style>
       body {
-        max-width: 600px;
+        max-width: 500px;
         margin-left: auto;
         margin-right: auto;
         padding: 1em;
-        font-size: 14pt;
+        font-size: 12pt;
         font-family: -apple-system, BlinkMacSystemFont,
             "Segoe UI", "Roboto", "Oxygen",
             "Ubuntu", "Cantarell", "Fira Sans",
