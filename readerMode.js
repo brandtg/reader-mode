@@ -129,28 +129,38 @@ function renderReaderMode() {
 }
 
 function renderReaderModeNewTab() {
+
+  var root = document.querySelector("article");
+  if (!root) {
+    root = document;
+  }
+
   const content =
     Array.from(
-      document.querySelectorAll("h1, h2, h3, h4, h5, h6, p, img, table")
+      root.querySelectorAll("h1, h2, h3, h4, h5, h6, p, img, table")
     )
       .filter((elt) => !isHidden(elt))
       .map((elt) => elt.outerHTML)
-      .join(" ") +
-    `
+      .join(" ");
+
+  /*
+    font-family: -apple-system, BlinkMacSystemFont,
+        "Segoe UI", "Roboto", "Oxygen",
+        "Ubuntu", "Cantarell", "Fira Sans",
+        "Droid Sans", "Helvetica Neue", sans-serif;*/
+  
+  const style = `
     <style>
       body {
-        max-width: 500px;
+        max-width: 600px;
         margin-left: auto;
         margin-right: auto;
         padding: 1em;
-        font-size: 12pt;
-        font-family: -apple-system, BlinkMacSystemFont,
-            "Segoe UI", "Roboto", "Oxygen",
-            "Ubuntu", "Cantarell", "Fira Sans",
-            "Droid Sans", "Helvetica Neue", sans-serif;
+        font-size: 14pt;
+        font-family: serif;
       }
       p {
-        line-height: 1.2;
+        line-height: 1.3;
       }
       a {
         color: #5E81AC;
@@ -178,7 +188,7 @@ function renderReaderModeNewTab() {
           width='100%'
           height='100%'
           onload='this.focus();'
-          src='data:text/html;charset=UTF-8;base64,${Base64.encode(content)}'>
+          src='data:text/html;charset=UTF-8;base64,${Base64.encode(content + style)}'>
       </iframe>
     </body>
     `
