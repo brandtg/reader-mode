@@ -156,11 +156,11 @@ function renderReaderModeNewTab() {
         margin-left: auto;
         margin-right: auto;
         padding: 1em;
-        font-size: 14pt;
-        font-family: serif;
+        font-size: 15pt;
+        font-family: Georgia, serif;
       }
       p {
-        line-height: 1.3;
+        line-height: 1.4;
       }
       a {
         color: #5E81AC;
