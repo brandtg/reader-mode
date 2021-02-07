@@ -175,6 +175,22 @@ function renderReaderModeNewTab() {
     </style>
   `;
 
+  const shortcuts = `
+      <script>
+        window.onkeydown = function (e) {
+            var code = e.keyCode ? e.keyCode : e.which;
+            console.log(code);
+            if (code === 74) {
+              // j
+              window.scrollBy(0, window.innerHeight);
+            } else if (code === 75) {
+              // k
+              window.scrollBy(0, -window.innerHeight);
+            }
+        };
+      </script>
+  `;
+
   const reader = window.open();
   reader.document.open();
   reader.document.write(
@@ -188,7 +204,7 @@ function renderReaderModeNewTab() {
           width='100%'
           height='100%'
           onload='this.focus();'
-          src='data:text/html;charset=UTF-8;base64,${Base64.encode(content + style)}'>
+          src='data:text/html;charset=UTF-8;base64,${Base64.encode(content + style + shortcuts)}'>
       </iframe>
     </body>
     `
@@ -204,3 +220,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     console.warn(`Unknown command: ${request.command}`);
   }
 });
+
+//document.addEventListener("keyup", function(event) {
+//  console.log(event);
+//  console.log(event.keyCode);
+//});
