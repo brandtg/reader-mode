@@ -162,12 +162,6 @@ function renderReaderModeNewTab() {
       p {
         line-height: 1.4;
       }
-      a {
-        color: #5E81AC;
-      }
-      a:visited {
-        color: #B48EAD;
-      }
       img {
         max-width: 600px;
         height: auto;
@@ -182,10 +176,18 @@ function renderReaderModeNewTab() {
             console.log(code);
             if (code === 74) {
               // j
-              window.scrollBy(0, window.innerHeight);
+              window.scrollBy({
+                top: window.innerHeight * 0.8,
+                left: 0,
+                behavior: "smooth",
+              });
             } else if (code === 75) {
               // k
-              window.scrollBy(0, -window.innerHeight);
+              window.scrollBy({
+                top: -window.innerHeight * 0.8,
+                left: 0,
+                behavior: "smooth",
+              });
             }
         };
       </script>
