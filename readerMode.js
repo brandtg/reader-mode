@@ -101,34 +101,6 @@ function isHidden(el) {
 }
 
 function renderReaderMode() {
-  const content = Array.from(
-    document.querySelectorAll("h1, h2, h3, h4, h5, h6, p, img, table")
-  ).filter((elt) => !isHidden(elt));
-  document.head.innerHTML = `
-    <style>
-      body {
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-        padding: 1em;
-        font-size: 14pt;
-        font-family: Helvetica, sans-serif;
-        color: #2E3440; 
-        background-color: #ECEFF4;
-      }
-      a {
-        color: #5E81AC;
-      }
-      a:visited {
-        color: #B48EAD;
-      }
-    </style>
-  `;
-  document.body.innerHTML = "";
-  content.forEach((elt) => document.body.appendChild(elt));
-}
-
-function renderReaderModeNewTab() {
 
   var root = document.querySelector("article");
   if (!root) {
@@ -142,12 +114,6 @@ function renderReaderModeNewTab() {
       .filter((elt) => !isHidden(elt))
       .map((elt) => elt.outerHTML)
       .join(" ");
-
-  /*
-    font-family: -apple-system, BlinkMacSystemFont,
-        "Segoe UI", "Roboto", "Oxygen",
-        "Ubuntu", "Cantarell", "Fira Sans",
-        "Droid Sans", "Helvetica Neue", sans-serif;*/
   
   const style = `
     <style>
@@ -156,7 +122,7 @@ function renderReaderModeNewTab() {
         margin-left: auto;
         margin-right: auto;
         padding: 1em;
-        font-size: 15pt;
+        font-size: 16pt;
         font-family: Georgia, serif;
       }
       p {
@@ -216,14 +182,8 @@ function renderReaderModeNewTab() {
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.command === "reader-mode") {
-    //renderReaderMode();
-    renderReaderModeNewTab();
+    renderReaderMode();
   } else {
     console.warn(`Unknown command: ${request.command}`);
   }
 });
-
-//document.addEventListener("keyup", function(event) {
-//  console.log(event);
-//  console.log(event.keyCode);
-//});
