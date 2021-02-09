@@ -109,7 +109,7 @@ function renderReaderMode() {
 
   const content =
     Array.from(
-      root.querySelectorAll("h1, h2, h3, h4, h5, h6, p, img, table")
+      root.querySelectorAll("h1, h2, h3, h4, h5, h6, p, img, table, pre")
     )
       .filter((elt) => !isHidden(elt))
       .map((elt) => elt.outerHTML)
@@ -131,6 +131,9 @@ function renderReaderMode() {
       img {
         max-width: 600px;
         height: auto;
+      }
+      pre {
+        font-size: 10pt;
       }
     </style>
   `;
