@@ -146,14 +146,14 @@ function renderReaderMode() {
             if (code === 74) {
               // j
               window.scrollBy({
-                top: window.innerHeight * 0.8,
+                top: window.innerHeight,
                 left: 0,
                 behavior: "smooth",
               });
             } else if (code === 75) {
               // k
               window.scrollBy({
-                top: -window.innerHeight * 0.8,
+                top: -window.innerHeight,
                 left: 0,
                 behavior: "smooth",
               });
