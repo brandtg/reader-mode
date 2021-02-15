@@ -1,4 +1,67 @@
-var Base64 = {
+function renderReaderMode() {
+  var root = document.querySelector("article");
+  if (!root) {
+    root = document;
+  }
+
+  const content = Array.from(
+    root.querySelectorAll("h1, h2, h3, h4, h5, h6, p, img, table, pre")
+  )
+    .filter((elt) => !isHidden(elt))
+    .map((elt) => elt.outerHTML)
+    .join(" ");
+
+  createNewTabWithContent(content + STYLE + SHORTCUTS);
+}
+
+function renderReaderModeWikipedia() {
+  const title = document.querySelector("#content #firstHeading");
+  const body = document.querySelector("#bodyContent");
+  // TODO img (need to prepend wikipedia hostname)
+  const elts = body.querySelectorAll("h1, h2, h3, h4, h5, h6, p");
+  const content = [title]
+    .concat(Array.from(elts))
+    .filter((elt) => !isHidden(elt))
+    .map((elt) => elt.outerHTML)
+    .join(" ");
+  createNewTabWithContent(content + STYLE + SHORTCUTS);
+}
+
+function createNewTabWithContent(content) {
+  const reader = window.open();
+  reader.document.open();
+  reader.document.write(
+    `
+    <head>
+      <title>${document.title}</title>
+    </head>
+    <body>
+      <iframe
+          style='border: 0'
+          width='100%'
+          height='100%'
+          onload='this.focus();'
+          src='data:text/html;charset=UTF-8;base64,${Base64.encode(content)}'>
+      </iframe>
+    </body>
+    `
+  );
+  reader.document.close();
+}
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.command === "reader-mode") {
+    if (window.location.hostname.includes("wikipedia.org")) {
+      renderReaderModeWikipedia();
+    } else {
+      renderReaderMode();
+    }
+  } else {
+    console.warn(`Unknown command: ${request.command}`);
+  }
+});
+
+const Base64 = {
   _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
   encode: function (e) {
     var t = "";
@@ -96,97 +159,56 @@ var Base64 = {
   },
 };
 
+const SHORTCUTS = `
+<script>
+  window.onkeydown = function (e) {
+      var code = e.keyCode ? e.keyCode : e.which;
+      if (code === 74) {
+        // j
+        window.scrollBy({
+          top: window.innerHeight,
+          left: 0,
+          behavior: "smooth",
+        });
+      } else if (code === 75) {
+        // k
+        window.scrollBy({
+          top: -window.innerHeight,
+          left: 0,
+          behavior: "smooth",
+        });
+      }
+  };
+</script>
+`;
+
+const STYLE = `
+  <style>
+    body {
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 1em;
+      font-size: 16pt;
+      font-family: Georgia, serif;
+    }
+    p {
+      line-height: 1.4;
+    }
+    img {
+      max-width: 600px;
+      height: auto;
+    }
+    pre {
+      font-size: 10pt;
+    }
+    a {
+      color: #5E81AC;
+      text-decoration: none;
+    }
+  </style>
+`;
+
 function isHidden(el) {
   return el.offsetParent === null;
 }
-
-function renderReaderMode() {
-
-  var root = document.querySelector("article");
-  if (!root) {
-    root = document;
-  }
-
-  const content =
-    Array.from(
-      root.querySelectorAll("h1, h2, h3, h4, h5, h6, p, img, table, pre")
-    )
-      .filter((elt) => !isHidden(elt))
-      .map((elt) => elt.outerHTML)
-      .join(" ");
-  
-  const style = `
-    <style>
-      body {
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-        padding: 1em;
-        font-size: 16pt;
-        font-family: Georgia, serif;
-      }
-      p {
-        line-height: 1.4;
-      }
-      img {
-        max-width: 600px;
-        height: auto;
-      }
-      pre {
-        font-size: 10pt;
-      }
-    </style>
-  `;
-
-  const shortcuts = `
-      <script>
-        window.onkeydown = function (e) {
-            var code = e.keyCode ? e.keyCode : e.which;
-            console.log(code);
-            if (code === 74) {
-              // j
-              window.scrollBy({
-                top: window.innerHeight,
-                left: 0,
-                behavior: "smooth",
-              });
-            } else if (code === 75) {
-              // k
-              window.scrollBy({
-                top: -window.innerHeight,
-                left: 0,
-                behavior: "smooth",
-              });
-            }
-        };
-      </script>
-  `;
-
-  const reader = window.open();
-  reader.document.open();
-  reader.document.write(
-    `
-    <head>
-      <title>${document.title}</title>
-    </head>
-    <body>
-      <iframe
-          style='border: 0'
-          width='100%'
-          height='100%'
-          onload='this.focus();'
-          src='data:text/html;charset=UTF-8;base64,${Base64.encode(content + style + shortcuts)}'>
-      </iframe>
-    </body>
-    `
-  );
-  reader.document.close();
-}
-
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.command === "reader-mode") {
-    renderReaderMode();
-  } else {
-    console.warn(`Unknown command: ${request.command}`);
-  }
-});
