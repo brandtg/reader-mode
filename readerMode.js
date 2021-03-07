@@ -8,6 +8,17 @@ function renderReaderMode() {
     root.querySelectorAll("h1, h2, h3, h4, h5, h6, p, img, table, pre")
   )
     .filter((elt) => !isHidden(elt))
+    .map((elt) => {
+      const copy = elt.cloneNode(true);
+      [...copy.attributes].forEach((attr) => {
+        // TODO Any other attributes?
+        if (attr.name !== "src") {
+          console.log(`Removing ${attr}`);
+          copy.removeAttribute(attr.name);
+        }
+      });
+      return copy;
+    })
     .map((elt) => elt.outerHTML)
     .join(" ");
 
