@@ -5,7 +5,7 @@ function renderReaderMode() {
   }
 
   const content = Array.from(
-    root.querySelectorAll("h1, h2, h3, h4, h5, h6, p, img, table, pre")
+    root.querySelectorAll("h1, h2, h3, h4, h5, h6, p, img, table, pre, ul, ol")
   )
     .filter((elt) => !isHidden(elt))
     .map((elt) => {
@@ -29,7 +29,7 @@ function renderReaderModeWikipedia() {
   const title = document.querySelector("#content #firstHeading");
   const body = document.querySelector("#bodyContent");
   // TODO img (need to prepend wikipedia hostname)
-  const elts = body.querySelectorAll("h1, h2, h3, h4, h5, h6, p");
+  const elts = body.querySelectorAll("h1, h2, h3, h4, h5, h6, p, ul, ol");
   const content = [title]
     .concat(Array.from(elts))
     .filter((elt) => !isHidden(elt))
