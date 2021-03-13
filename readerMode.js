@@ -7,13 +7,11 @@ function renderReaderMode() {
   const content = Array.from(
     root.querySelectorAll("h1, h2, h3, h4, h5, h6, p, img, table, pre, ul, ol")
   )
-    .filter((elt) => !isHidden(elt))
+    .filter((elt) => !isHidden(elt) && !isNavbar(elt))
     .map((elt) => {
       const copy = elt.cloneNode(true);
       [...copy.attributes].forEach((attr) => {
-        // TODO Any other attributes?
         if (attr.name !== "src") {
-          console.log(`Removing ${attr}`);
           copy.removeAttribute(attr.name);
         }
       });
@@ -32,7 +30,7 @@ function renderReaderModeWikipedia() {
   const elts = body.querySelectorAll("h1, h2, h3, h4, h5, h6, p, ul, ol");
   const content = [title]
     .concat(Array.from(elts))
-    .filter((elt) => !isHidden(elt))
+    .filter((elt) => !isHidden(elt) && !isNavbar(elt))
     .map((elt) => elt.outerHTML)
     .join(" ");
   createNewTabWithContent(content + STYLE + SHORTCUTS);
@@ -226,4 +224,31 @@ const STYLE = `
 
 function isHidden(el) {
   return el.offsetParent === null;
+}
+
+function isNavbar(el) {
+  var current = el;
+  while (current !== null) {
+    if (
+      current.classList &&
+      Array.from(current.classList).filter(
+        (className) => className && className.toLowerCase().includes("nav")
+      ).length > 0
+    ) {
+      return true;
+    }
+    current = current.parentNode;
+  }
+  return false;
+}
+
+function isFooter(el) {
+  var current = el;
+  while (current !== null) {
+    if (current.tagName === "FOOTER") {
+      return true;
+    }
+    current = current.parentNode;
+  }
+  return false;
 }
