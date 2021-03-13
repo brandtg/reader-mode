@@ -217,6 +217,10 @@ const STYLE = `
       color: #5E81AC;
       text-decoration: none;
     }
+    li {
+      margin-bottom: 1em;
+      margin-top: 1em;
+    }
   </style>
 `;
 
