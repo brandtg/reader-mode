@@ -1,12 +1,17 @@
 function renderReaderMode() {
-  var root = document.querySelector("article");
-  if (!root) {
-    root = document;
+  var root = Array.from(document.querySelectorAll("article"));
+  if (!root || root.length === 0) {
+    root = [document];
   }
   var hasH1 = false;
-  var content = Array.from(
-    root.querySelectorAll("h1, h2, h3, h4, h5, h6, p, img, table, pre, ul, ol")
-  )
+  var content = root
+    .flatMap((elt) =>
+      Array.from(
+        elt.querySelectorAll(
+          "h1, h2, h3, h4, h5, h6, p, img, table, pre, ul, ol"
+        )
+      )
+    )
     .filter((elt) => !isHidden(elt) && !isNavbar(elt))
     .map((elt) => {
       hasH1 ||= elt.tagName === "H1";
