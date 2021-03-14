@@ -3,12 +3,13 @@ function renderReaderMode() {
   if (!root) {
     root = document;
   }
-
-  const content = Array.from(
+  var hasH1 = false;
+  var content = Array.from(
     root.querySelectorAll("h1, h2, h3, h4, h5, h6, p, img, table, pre, ul, ol")
   )
     .filter((elt) => !isHidden(elt) && !isNavbar(elt))
     .map((elt) => {
+      hasH1 ||= elt.tagName === "H1";
       const copy = elt.cloneNode(true);
       [...copy.attributes].forEach((attr) => {
         if (attr.name !== "src") {
@@ -19,7 +20,9 @@ function renderReaderMode() {
     })
     .map((elt) => elt.outerHTML)
     .join(" ");
-
+  if (!hasH1) {
+    content = `<h1>${document.title}</h1>` + content;
+  }
   createNewTabWithContent(content + STYLE + SHORTCUTS);
 }
 
