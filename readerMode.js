@@ -1,31 +1,31 @@
-const renderReaderMode = () => {
-  var hasH1 = false;
-  var content = [document]
-    .flatMap((elt) =>
-      Array.from(
-        elt.querySelectorAll(
-          "h1, h2, h3, h4, h5, h6, p, img, table, pre, ul, ol"
-        )
-      )
-    )
-    .filter((elt) => !isHidden(elt) && !isNavbar(elt) && !isChum(elt))
-    .map((elt) => {
-      hasH1 ||= elt.tagName === "H1";
-      const copy = elt.cloneNode(true);
-      [...copy.attributes].forEach((attr) => {
-        if (attr.name !== "src") {
-          copy.removeAttribute(attr.name);
-        }
-      });
-      return copy;
-    })
-    .map((elt) => elt.outerHTML)
-    .join(" ");
-  if (!hasH1) {
-    content = `<h1>${document.title}</h1>` + content;
-  }
-  createNewTabWithContent(content + STYLE + SHORTCUTS);
-}
+//const renderReaderMode = () => {
+//  var hasH1 = false;
+//  var content = [document]
+//    .flatMap((elt) =>
+//      Array.from(
+//        elt.querySelectorAll(
+//          "h1, h2, h3, h4, h5, h6, p, img, table, pre, ul, ol"
+//        )
+//      )
+//    )
+//    .filter((elt) => !isHidden(elt) && !isNavbar(elt) && !isChum(elt))
+//    .map((elt) => {
+//      hasH1 ||= elt.tagName === "H1";
+//      const copy = elt.cloneNode(true);
+//      [...copy.attributes].forEach((attr) => {
+//        if (attr.name !== "src") {
+//          copy.removeAttribute(attr.name);
+//        }
+//      });
+//      return copy;
+//    })
+//    .map((elt) => elt.outerHTML)
+//    .join(" ");
+//  if (!hasH1) {
+//    content = `<h1>${document.title}</h1>` + content;
+//  }
+//  createNewTabWithContent(content + STYLE + SHORTCUTS);
+//};
 
 const createNewTabWithContent = (content) => {
   const reader = window.open();
@@ -47,7 +47,7 @@ const createNewTabWithContent = (content) => {
     `
   );
   reader.document.close();
-}
+};
 
 const Base64 = {
   _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
@@ -198,12 +198,18 @@ const STYLE = `
       margin-bottom: 1em;
       margin-top: 1em;
     }
+    blockquote {
+      background: #f9f9f9;
+      border-left: 10px solid #ccc;
+      margin: 1.5em 10px;
+      padding: 0.5em 10px;
+    }
   </style>
 `;
 
 const isHidden = (el) => {
   return el.offsetParent === null;
-}
+};
 
 const classNameMatches = (elt, text) => {
   return (
@@ -212,7 +218,7 @@ const classNameMatches = (elt, text) => {
       (className) => className && className.toLowerCase().includes(text)
     ).length > 0
   );
-}
+};
 
 const checkParents = (elt, predicate) => {
   var current = elt;
@@ -223,19 +229,19 @@ const checkParents = (elt, predicate) => {
     current = current.parentNode;
   }
   return false;
-}
+};
 
 const isNavbar = (elt) => {
   return checkParents(elt, (x) => {
     return classNameMatches(x, "nav");
   });
-}
+};
 
 const isFooter = (elt) => {
   return checkParents(elt, (x) => {
     return elt.tagName === "FOOTER";
   });
-}
+};
 
 const isChum = (elt) => {
   return checkParents(elt, (x) => {
@@ -249,11 +255,79 @@ const isChum = (elt) => {
         .filter((x) => x).length > 0
     );
   });
-}
+};
+
+const isMenu = (elt) => {
+  return checkParents(elt, (x) => {
+    return classNameMatches(x, "menu");
+  });
+};
+
+const CONTENT_SELECTOR = "h1, h2, h3, h4, h5, h6, p, blockquote, iframe";
+
+const findAncestors = (elt) => {
+  const ancestors = [elt];
+  let current = elt.parentNode;
+  while (current !== null) {
+    ancestors.push(current);
+    current = current.parentNode;
+  }
+  return ancestors;
+};
+
+const findLeastCommonAncestor = (a, b) => {
+  const ancestorsA = findAncestors(a);
+  const ancestorsB = findAncestors(b);
+
+  // TODO Inefficient, but check pairwise for equality
+  for (let i of ancestorsA) {
+    for (let j of ancestorsB) {
+      if (i === j) {
+        return i;
+      }
+    }
+  }
+};
+
+const isAd = (elt) => {
+  return (
+    (elt.src && elt.src.includes("googlesyndication.com")) ||
+    (elt.id && elt.id.includes("google_ad"))
+  );
+};
+
+const findContentElements = () => {
+  // Find visible content
+  const elts = Array.from(document.querySelectorAll(CONTENT_SELECTOR)).filter(
+    (elt) => !isHidden(elt) && !isMenu(elt) && !isAd(elt) && !isFooter(elt)
+  );
+
+  // Prune any elements that are children of others
+  // I.e. if the least common ancestor is equal to either of the nodes
+  const excludes = new Set();
+  for (let a of elts) {
+    for (let b of elts) {
+      if (a !== b) {
+        const lca = findLeastCommonAncestor(a, b);
+        if (lca === a) {
+          excludes.add(b);
+        } else if (lca === b) {
+          excludes.add(a);
+        }
+      }
+    }
+  }
+
+  return elts.filter((elt) => !excludes.has(elt));
+};
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.command === "reader-mode") {
-    renderReaderMode();
+    //renderReaderMode();
+    const content = findContentElements()
+      .map((elt) => elt.outerHTML)
+      .join(" ");
+    createNewTabWithContent(content + STYLE + SHORTCUTS);
   } else {
     console.warn(`Unknown command: ${request.command}`);
   }
