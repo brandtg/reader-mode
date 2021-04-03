@@ -12,7 +12,7 @@ function renderReaderMode() {
         )
       )
     )
-    .filter((elt) => !isHidden(elt) && !isNavbar(elt))
+    .filter((elt) => !isHidden(elt) && !isNavbar(elt) && !isChum(elt))
     .map((elt) => {
       hasH1 ||= elt.tagName === "H1";
       const copy = elt.cloneNode(true);
@@ -28,19 +28,6 @@ function renderReaderMode() {
   if (!hasH1) {
     content = `<h1>${document.title}</h1>` + content;
   }
-  createNewTabWithContent(content + STYLE + SHORTCUTS);
-}
-
-function renderReaderModeWikipedia() {
-  const title = document.querySelector("#content #firstHeading");
-  const body = document.querySelector("#bodyContent");
-  // TODO img (need to prepend wikipedia hostname)
-  const elts = body.querySelectorAll("h1, h2, h3, h4, h5, h6, p, ul, ol");
-  const content = [title]
-    .concat(Array.from(elts))
-    .filter((elt) => !isHidden(elt) && !isNavbar(elt))
-    .map((elt) => elt.outerHTML)
-    .join(" ");
   createNewTabWithContent(content + STYLE + SHORTCUTS);
 }
 
@@ -68,11 +55,7 @@ function createNewTabWithContent(content) {
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.command === "reader-mode") {
-    if (window.location.hostname.includes("wikipedia.org")) {
-      renderReaderModeWikipedia();
-    } else {
-      renderReaderMode();
-    }
+    renderReaderMode();
   } else {
     console.warn(`Unknown command: ${request.command}`);
   }
@@ -234,15 +217,19 @@ function isHidden(el) {
   return el.offsetParent === null;
 }
 
-function isNavbar(el) {
-  var current = el;
+function classNameMatches(elt, text) {
+  return (
+    elt.classList &&
+    Array.from(elt.classList).filter(
+      (className) => className && className.toLowerCase().includes(text)
+    ).length > 0
+  );
+}
+
+function checkParents(elt, predicate) {
+  var current = elt;
   while (current !== null) {
-    if (
-      current.classList &&
-      Array.from(current.classList).filter(
-        (className) => className && className.toLowerCase().includes("nav")
-      ).length > 0
-    ) {
+    if (predicate(current)) {
       return true;
     }
     current = current.parentNode;
@@ -250,13 +237,23 @@ function isNavbar(el) {
   return false;
 }
 
-function isFooter(el) {
-  var current = el;
-  while (current !== null) {
-    if (current.tagName === "FOOTER") {
-      return true;
-    }
-    current = current.parentNode;
-  }
-  return false;
+function isNavbar(elt) {
+  return checkParents(elt, function (x) {
+    return classNameMatches(x, "nav");
+  });
+}
+
+function isFooter(elt) {
+  return checkParents(elt, function (x) {
+    return elt.tagName === "FOOTER";
+  });
+}
+
+function isChum(elt) {
+  return checkParents(elt, function (x) {
+    return (
+      (elt.id && elt.id.toLowerCase().includes("outbrain")) ||
+      classNameMatches(x, "outbrain")
+    );
+  });
 }
