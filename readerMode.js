@@ -1,4 +1,4 @@
-function renderReaderMode() {
+const renderReaderMode = () => {
   var hasH1 = false;
   var content = [document]
     .flatMap((elt) =>
@@ -27,7 +27,7 @@ function renderReaderMode() {
   createNewTabWithContent(content + STYLE + SHORTCUTS);
 }
 
-function createNewTabWithContent(content) {
+const createNewTabWithContent = (content) => {
   const reader = window.open();
   reader.document.open();
   reader.document.write(
@@ -48,14 +48,6 @@ function createNewTabWithContent(content) {
   );
   reader.document.close();
 }
-
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.command === "reader-mode") {
-    renderReaderMode();
-  } else {
-    console.warn(`Unknown command: ${request.command}`);
-  }
-});
 
 const Base64 = {
   _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
@@ -209,11 +201,11 @@ const STYLE = `
   </style>
 `;
 
-function isHidden(el) {
+const isHidden = (el) => {
   return el.offsetParent === null;
 }
 
-function classNameMatches(elt, text) {
+const classNameMatches = (elt, text) => {
   return (
     elt.classList &&
     Array.from(elt.classList).filter(
@@ -222,7 +214,7 @@ function classNameMatches(elt, text) {
   );
 }
 
-function checkParents(elt, predicate) {
+const checkParents = (elt, predicate) => {
   var current = elt;
   while (current !== null) {
     if (predicate(current)) {
@@ -233,20 +225,20 @@ function checkParents(elt, predicate) {
   return false;
 }
 
-function isNavbar(elt) {
-  return checkParents(elt, function (x) {
+const isNavbar = (elt) => {
+  return checkParents(elt, (x) => {
     return classNameMatches(x, "nav");
   });
 }
 
-function isFooter(elt) {
-  return checkParents(elt, function (x) {
+const isFooter = (elt) => {
+  return checkParents(elt, (x) => {
     return elt.tagName === "FOOTER";
   });
 }
 
-function isChum(elt) {
-  return checkParents(elt, function (x) {
+const isChum = (elt) => {
+  return checkParents(elt, (x) => {
     return (
       ["outbrain", "related"]
         .map(
@@ -258,3 +250,11 @@ function isChum(elt) {
     );
   });
 }
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.command === "reader-mode") {
+    renderReaderMode();
+  } else {
+    console.warn(`Unknown command: ${request.command}`);
+  }
+});
