@@ -1,10 +1,6 @@
 function renderReaderMode() {
-  var root = Array.from(document.querySelectorAll("article"));
-  if (!root || root.length === 0) {
-    root = [document];
-  }
   var hasH1 = false;
-  var content = root
+  var content = [document]
     .flatMap((elt) =>
       Array.from(
         elt.querySelectorAll(
@@ -252,8 +248,13 @@ function isFooter(elt) {
 function isChum(elt) {
   return checkParents(elt, function (x) {
     return (
-      (elt.id && elt.id.toLowerCase().includes("outbrain")) ||
-      classNameMatches(x, "outbrain")
+      ["outbrain", "related"]
+        .map(
+          (term) =>
+            (elt.id && elt.id.toLowerCase().includes(term)) ||
+            classNameMatches(x, term)
+        )
+        .filter((x) => x).length > 0
     );
   });
 }
