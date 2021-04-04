@@ -234,7 +234,8 @@ const isMenu = (elt) => {
   });
 };
 
-const CONTENT_SELECTOR = "h1, h2, h3, h4, h5, h6, p, blockquote, iframe";
+const CONTENT_SELECTOR =
+  "h1, h2, h3, h4, h5, h6, p, blockquote, iframe, ul, ol";
 
 const findAncestors = (elt) => {
   const ancestors = [elt];
@@ -267,10 +268,24 @@ const isAd = (elt) => {
   );
 };
 
-const isAcceptableIframe = (elt) => {
-  return (
-    elt.tagName !== "IFRAME" || (elt.src && elt.src.includes("twitter.com"))
-  );
+const isAcceptableElement = (elt) => {
+  if (elt.tagName === "IFRAME") {
+    return elt.src && elt.src.includes("twitter.com");
+  } else if (elt.tagName === "UL" || elt.tagName === "OL") {
+    // Need to have at least one li with at least one plain text child
+    return (
+      Array.from(elt.querySelectorAll("li")).filter(
+        (li) =>
+          li.hasChildNodes() &&
+          Array.from(li.childNodes)
+            .filter((node) => node.nodeType === Node.TEXT_NODE)
+            .map((node) => node.textContent.trim())
+            .filter((text) => text.length > 0).length > 0
+      ).length > 0
+    );
+  } else {
+    return true;
+  }
 };
 
 const findContentElements = () => {
@@ -281,7 +296,7 @@ const findContentElements = () => {
       !isMenu(elt) &&
       !isAd(elt) &&
       !isFooter(elt) &&
-      isAcceptableIframe(elt)
+      isAcceptableElement(elt)
   );
 
   // Prune any elements that are children of others
