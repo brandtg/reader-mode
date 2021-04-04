@@ -267,10 +267,21 @@ const isAd = (elt) => {
   );
 };
 
+const isAcceptableIframe = (elt) => {
+  return (
+    elt.tagName !== "IFRAME" || (elt.src && elt.src.includes("twitter.com"))
+  );
+};
+
 const findContentElements = () => {
   // Find visible content
   const elts = Array.from(document.querySelectorAll(CONTENT_SELECTOR)).filter(
-    (elt) => !isHidden(elt) && !isMenu(elt) && !isAd(elt) && !isFooter(elt)
+    (elt) =>
+      !isHidden(elt) &&
+      !isMenu(elt) &&
+      !isAd(elt) &&
+      !isFooter(elt) &&
+      isAcceptableIframe(elt)
   );
 
   // Prune any elements that are children of others
