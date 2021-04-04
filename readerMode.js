@@ -18,6 +18,7 @@ const createNewTabWithContent = (content) => {
     `
   );
   reader.document.close();
+  window.close();
 };
 
 const Base64 = {
