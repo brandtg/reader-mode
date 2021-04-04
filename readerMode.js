@@ -1,3 +1,4 @@
+// TODO https://www.w3schools.com/jsref/met_win_open.asp
 const createNewTabWithContent = (content) => {
   const reader = window.open();
   reader.document.open();
