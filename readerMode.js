@@ -1,32 +1,3 @@
-//const renderReaderMode = () => {
-//  var hasH1 = false;
-//  var content = [document]
-//    .flatMap((elt) =>
-//      Array.from(
-//        elt.querySelectorAll(
-//          "h1, h2, h3, h4, h5, h6, p, img, table, pre, ul, ol"
-//        )
-//      )
-//    )
-//    .filter((elt) => !isHidden(elt) && !isNavbar(elt) && !isChum(elt))
-//    .map((elt) => {
-//      hasH1 ||= elt.tagName === "H1";
-//      const copy = elt.cloneNode(true);
-//      [...copy.attributes].forEach((attr) => {
-//        if (attr.name !== "src") {
-//          copy.removeAttribute(attr.name);
-//        }
-//      });
-//      return copy;
-//    })
-//    .map((elt) => elt.outerHTML)
-//    .join(" ");
-//  if (!hasH1) {
-//    content = `<h1>${document.title}</h1>` + content;
-//  }
-//  createNewTabWithContent(content + STYLE + SHORTCUTS);
-//};
-
 const createNewTabWithContent = (content) => {
   const reader = window.open();
   reader.document.open();
@@ -154,14 +125,14 @@ const SHORTCUTS = `
       if (code === 74) {
         // j
         window.scrollBy({
-          top: window.innerHeight,
+          top: window.innerHeight / 2,
           left: 0,
           behavior: "smooth",
         });
       } else if (code === 75) {
         // k
         window.scrollBy({
-          top: -window.innerHeight,
+          top: -window.innerHeight / 2,
           left: 0,
           behavior: "smooth",
         });
