@@ -300,12 +300,25 @@ const findContentElements = () => {
     }
   }
 
+  // Prune any elements before the first header
+  const beforeH1 = new Set();
+  let seenH1 = false;
+  for (let elt of elts) {
+    if (elt.tagName === "H1") {
+      seenH1 = true;
+    } else if (!seenH1) {
+      beforeH1.add(elt);
+    }
+  }
+  if (seenH1) {
+    beforeH1.forEach((elt) => excludes.add(elt));
+  }
+
   return elts.filter((elt) => !excludes.has(elt));
 };
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.command === "reader-mode") {
-    //renderReaderMode();
     const content = findContentElements()
       .map((elt) => elt.outerHTML)
       .join(" ");
