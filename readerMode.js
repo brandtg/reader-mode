@@ -19,7 +19,8 @@ const createNewTabWithContent = (content) => {
     `
   );
   reader.document.close();
-  window.close();
+  // TODO Remove this? Not sure if closing the tab is the right UX
+  //window.close();
 };
 
 const Base64 = {
@@ -127,14 +128,14 @@ const SHORTCUTS = `
       if (code === 74) {
         // j
         window.scrollBy({
-          top: window.innerHeight / 2,
+          top: window.innerHeight / 4,
           left: 0,
           behavior: "smooth",
         });
       } else if (code === 75) {
         // k
         window.scrollBy({
-          top: -window.innerHeight / 2,
+          top: -window.innerHeight / 4,
           left: 0,
           behavior: "smooth",
         });
